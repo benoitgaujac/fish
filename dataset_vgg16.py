@@ -7,9 +7,9 @@ import operator
 import math
 import numpy as np
 
-import skimage.io
-import skimage.transform
-from sklearn.preprocessing import OneHotEncoder
+#import skimage.io
+#import skimage.transform
+from keras.preprocessing import image
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
@@ -48,7 +48,7 @@ class Dataset:
                 for file_name in file_list:
                     if file_name.endswith('.png') or file_name.endswith('.jpg'):
                         image_file = os.path.join(dir_name, file_name)
-                        image = self.get_image(image_file)
+                        image = self.preprocess_image(image_file)
                         image -= Mmean
                         if image is None:
                             print("Error loading image: {}".format(image_file))
@@ -62,23 +62,22 @@ class Dataset:
         #self.print_stats()
         print("Total images: {}".format(len(self.images)))
 
+    def preprocess_image(self,filename):
+        img = image.load_img(path, target_size = (self.image_size, self.image_size))
+        arr = image.img_to_array(img)
+        arr = np.expand_dims(arr, axis = 0)
+        pdb.set_trace()
+        return preprocess_input(arr)
+    """
     def get_image(self, filename):
         image = skimage.io.imread(filename)
         if image is None or len(image.shape) < 2 or len(image.shape) > 3:
            print("Fatal error can't read image: {}".format(image_file))
            return None, None
-        """
-        height, width, channel = image.shape
-        if width >= height and width > self.max_size:
-            scale = float(self.max_size) / float(width)
-        elif height >= width and height > self.max_size:
-            scale = float(self.max_size) / float(height)
-        if scale is not 1.0:
-            image = skimage.transform.resize(image, (int(scale*height), int(scale*width)), preserve_range=True)
-        """
         image = skimage.transform.resize(image, (self.image_size, self.image_size), preserve_range=True)
         image = np.transpose(image,(2,0,1))
         return image
+    """
 
     def print_stats(self):
         stats = dict()
