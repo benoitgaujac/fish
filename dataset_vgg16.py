@@ -65,8 +65,8 @@ class Dataset:
     def preprocess_image(self,filename):
         img = image.load_img(filename, target_size = (self.image_size, self.image_size))
         arr = image.img_to_array(img)
-        arr = np.expand_dims(arr, axis = 0)
         pdb.set_trace()
+        arr = np.expand_dims(arr,axis=0)
         return preprocess_input(arr)
     """
     def get_image(self, filename):
