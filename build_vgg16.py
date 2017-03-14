@@ -1,20 +1,20 @@
-# VGG-16, 16-layer model from the paper:
-# "Very Deep Convolutional Networks for Large-Scale Image Recognition"
-# Original source: https://gist.github.com/ksimonyan/211839e770f7b538e2d8
-# License: see http://www.robots.ox.ac.uk/~vgg/research/very_deep/
-
-# Download pretrained weights from:
-# https://s3.amazonaws.com/lasagne/recipes/pretrained/imagenet/vgg16.pkl
-
 from lasagne.layers import InputLayer
 from lasagne.layers import DenseLayer
 from lasagne.layers import NonlinearityLayer
 from lasagne.layers import DropoutLayer
 from lasagne.layers import Pool2DLayer as PoolLayer
+from lasagne.layers import MaxPool2DLayer as MaxPoolLayer
+from lasagne.layers import TransformerLayer
 #from lasagne.layers import Conv2DLayer as CPUConvLayer
 #from lasagne.layers.dnn import Conv2DDNNLayer as GPUConvLayer
 from lasagne.nonlinearities import softmax
 from lasagne.nonlinearities import elu
+from lasagne.init import HeUniform
+from lasagne.init import Constant
+
+import numpy as np
+import theano
+import pdb
 
 dropout_p = 0.5
 
@@ -25,9 +25,52 @@ def build_model(input_var,nclasses,GPU=False):
         from lasagne.layers import Conv2DLayer as Conv2DLayer
 
     l_in = InputLayer(shape=(None, 3, 224, 224), input_var=input_var)
+
+    ################### ST ###################
+    b = np.zeros((2, 3), dtype=theano.config.floatX)
+    b[0, 0] = 1
+    b[1, 1] = 1
+    b = b.flatten()
+    loc_l1 = MaxPoolLayer(l_in, pool_size=(2, 2))
+    loc_l2 = Conv2DLayer(
+                loc_l1,
+                num_filters=20,
+                filter_size=(5, 5),
+                W=HeUniform('relu'),
+                nonlinearity=elu)
+    loc_l3 = MaxPoolLayer(loc_l2, pool_size=(2, 2))
+    loc_l4 = Conv2DLayer(
+                loc_l3,
+                num_filters=20,
+                filter_size=(5, 5),
+                W=HeUniform('relu'),
+                nonlinearity=elu)
+    loc_l5 = DenseLayer(
+                loc_l4,
+                num_units=50,
+                W=HeUniform('relu'),
+                nonlinearity=elu)
+    loc_out = DenseLayer(
+                loc_l5,
+                num_units=6,
+                b=b,
+                W=Constant(0.0),
+                nonlinearity=None)
+    # Transformer network
+    l_trans1 = TransformerLayer(l_in, loc_out, downsample_factor=1.0)
+
+    """
+    from lasagne.layers import get_all_params
+    params_train= get_all_params(l_trans1)
+    print(params_train)
+    params_= get_all_params(l_trans1,trainable=True)
+    print(params_)
+    from lasagne.layers import get_output_shape
+    """
+
     ################### Conv1 ###################
     l_conv1_1 = Conv2DLayer(
-                l_in,
+                l_trans1,
                 num_filters=64, filter_size=(3,3),
                 stride=(1, 1), pad=1,
                 nonlinearity=elu,

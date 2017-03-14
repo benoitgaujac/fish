@@ -52,11 +52,11 @@ def load_params(network,weight_path,from_scratch):
     if from_scratch:
         with open(weight_path, 'rb') as f:
             weights = pickle.load(f, encoding='latin-1')['param values']
-        params[:-2] =  weights[:-2]
+        params[8:-2] =  weights[:-2]
     else:
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
-        params = pretrained_weights
+        params[8:] = pretrained_weights
     #network.initialize_layers()
     lasagne.layers.set_all_param_values(network, params)
     return network

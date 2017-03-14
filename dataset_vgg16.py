@@ -38,8 +38,8 @@ class Dataset:
         Mmean = np.ones((3,self.image_size,self.image_size))
         for i in range(3):
             Mmean[i] *= mean[i]
-        for i in range(len(FISH_CLASSES)):
-        #for i in range(1,3):
+        #for i in range(len(FISH_CLASSES)):
+        for i in range(1,3):
             c = 0
             im_dir = os.path.join(root_dir, FISH_CLASSES[i])
             for dir_name, _, file_list in os.walk(im_dir):
@@ -63,8 +63,8 @@ class Dataset:
     def preprocess_image(self,filename):
         img = image.load_img(filename, target_size = (self.image_size, self.image_size))
         arr = image.img_to_array(img)
-        return arr
-        #return np.transpose(arr,(2,0,1))
+        #return arr
+        return np.transpose(arr,(2,0,1))
     """
     def get_image(self, filename):
         image = skimage.io.imread(filename)
