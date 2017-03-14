@@ -4,7 +4,7 @@ import time
 
 import numpy as np
 import pickle
-import skimage.transform
+#import skimage.transform
 import theano
 import theano.tensor as T
 import lasagne
