@@ -4,7 +4,6 @@ import time
 
 import numpy as np
 import pickle
-#import skimage.transform
 import theano
 import theano.tensor as T
 import lasagne
@@ -77,7 +76,7 @@ def main(from_scratch=True, GPU=False, num_epochs=50) :
     else:
         weight_path = os.path.join(WEIGHTS_DIR, "model_vgg16.npz")
     # Build CNN model
-    print("Building network and compiling functions...")
+    print("\nBuilding network and compiling functions...")
     network = build_vgg16.build_model(input_var,NUM_CLASSES,GPU)
     network = load_params(network,weight_path,from_scratch)
     # Create a loss expression for training (categorical crossentropy)
@@ -107,7 +106,7 @@ def main(from_scratch=True, GPU=False, num_epochs=50) :
     Trainwriter.writerow(['Num Epoch', 'Time', 'Training loss', 'Validation loss','Validation accuracy','best accuracy','best val'])
 
     # Launch the training loop:
-    print("Starting training ...")
+    print("\nStarting training ...")
     #best val
     best_val = 100.0
     best_acc = 0.0
@@ -116,6 +115,9 @@ def main(from_scratch=True, GPU=False, num_epochs=50) :
     max_no_improvement = 3
     # We iterate over epochs:
     while epoch<num_epochs:
+        if (epochs_without_improvement+1)%3==0 :
+            learning_rate =float(learning_rate)/2
+            updates = lasagne.updates.adam(loss, params[-2:], learning_rate=learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-08)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         # In each epoch, do a full pass over the training data:
         train_err = 0
@@ -139,6 +141,7 @@ def main(from_scratch=True, GPU=False, num_epochs=50) :
 
         # Then we print the results for this epoch:
         print("Epoch {} of {} took {:.3f}s".format(epoch + 1, num_epochs, time.time() - start_time))
+        print("Learning rate: {:.6f}".format(learning_rate))
         print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
         print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
         print("  validation accuracy:\t\t{:.3f} %".format(val_acc / val_batches * 100))
