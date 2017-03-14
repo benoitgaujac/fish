@@ -14,6 +14,7 @@ from lasagne.layers import Pool2DLayer as PoolLayer
 #from lasagne.layers import Conv2DLayer as CPUConvLayer
 #from lasagne.layers.dnn import Conv2DDNNLayer as GPUConvLayer
 from lasagne.nonlinearities import softmax
+from lasagne.nonlinearities import elu
 
 dropout_p = 0.5
 
@@ -29,11 +30,13 @@ def build_model(input_var,nclasses,GPU=False):
                 l_in,
                 num_filters=64, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv1_2 = Conv2DLayer(
                 l_conv1_1,
                 num_filters=64, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     pool1 = PoolLayer(l_conv1_2, pool_size=(2, 2))
     ################### Conv2 ###################
@@ -41,11 +44,13 @@ def build_model(input_var,nclasses,GPU=False):
                 pool1,
                 num_filters=128, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv2_2 = Conv2DLayer(
                 l_conv2_1,
                 num_filters=128, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     pool2 = PoolLayer(l_conv2_2, pool_size=(2, 2))
     ################### Conv3 ###################
@@ -53,16 +58,19 @@ def build_model(input_var,nclasses,GPU=False):
                 pool2,
                 num_filters=256, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv3_2 = Conv2DLayer(
                 l_conv3_1,
                 num_filters=256, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv3_3 = Conv2DLayer(
                 l_conv3_2,
                 num_filters=256, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     pool3 = PoolLayer(l_conv3_3, pool_size=(2, 2))
     ################### Conv4 ###################
@@ -70,16 +78,19 @@ def build_model(input_var,nclasses,GPU=False):
                 pool3,
                 num_filters=512, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv4_2 = Conv2DLayer(
                 l_conv4_1,
                 num_filters=512, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv4_3 = Conv2DLayer(
                 l_conv4_2,
                 num_filters=512, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     pool4 = PoolLayer(l_conv4_3, pool_size=(2, 2))
     ################### Conv5 ###################
@@ -87,26 +98,31 @@ def build_model(input_var,nclasses,GPU=False):
                 pool4,
                 num_filters=512, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv5_2 = Conv2DLayer(
                 l_conv5_1,
                 num_filters=512, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     l_conv5_3 = Conv2DLayer(
                 l_conv5_2,
                 num_filters=512, filter_size=(3,3),
                 stride=(1, 1), pad=1,
+                nonlinearity=elu,
                 flip_filters=False)
     pool5 = PoolLayer(l_conv5_3, pool_size=(2, 2))
     ################### fc6 ###################
     fc6 = DenseLayer(
     		pool5,
+            nonlinearity=elu,
             num_units=4096)
     fc6_dropout = DropoutLayer(fc6, p=dropout_p)
     ################### fc7 ###################
     fc7 = DenseLayer(
     		fc6_dropout,
+            nonlinearity=elu,
             num_units=4096)
     fc7_dropout = DropoutLayer(fc7, p=dropout_p)
     ################### Classification ###################

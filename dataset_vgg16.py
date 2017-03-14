@@ -17,7 +17,7 @@ SEED = 66478
 
 def get_mean(list_im):
     images = np.stack([im[0] for im in list_im]).astype('float32')
-    mean = np.mean(images,(2,3))
+    mean = np.mean(images,(1,3))
     mean = np.mean(np.transpose(mean,(1,0)),(1))
     print("Mean on training set: {}, {}, {}".format(mean[0],mean[1],mean[2]))
     np.savez("training_mean.npz", mean)
@@ -38,8 +38,8 @@ class Dataset:
         Mmean = np.ones((3,self.image_size,self.image_size))
         for i in range(3):
             Mmean[i] *= mean[i]
-        #for i in range(len(FISH_CLASSES)):
-        for i in range(2,3):
+        for i in range(len(FISH_CLASSES)):
+        #for i in range(1,3):
             c = 0
             im_dir = os.path.join(root_dir, FISH_CLASSES[i])
             for dir_name, _, file_list in os.walk(im_dir):
