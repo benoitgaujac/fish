@@ -141,7 +141,7 @@ def main(from_scratch=True, GPU=False, num_epochs=50) :
 
         # Then we print the results for this epoch:
         print("Epoch {} of {} took {:.3f}s".format(epoch + 1, num_epochs, time.time() - start_time))
-        print("Learning rate:\t\t{:.6f}".format(learning_rate))
+        print("Learning rate: {:.6f}".format(learning_rate))
         print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
         print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
         print("  validation accuracy:\t\t{:.3f} %".format(val_acc / val_batches * 100))
