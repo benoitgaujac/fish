@@ -1,0 +1,2 @@
+Num Epoch;Time;Training loss;Validation loss;Validation accuracy;best accuracy;best val
+1;178.0825731754303;4.04096529607;0.518167522223;0.783783783784;78.3783783784;0.518167522223
