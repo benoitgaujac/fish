@@ -63,7 +63,7 @@ def load_params(network,weight_path,from_scratch):
     return network
 
 ######################################## main ########################################
-def main(from_scratch=True, GPU=False, num_epochs=20) :
+def main(from_scratch=True, GPU=False, num_epochs=50) :
     # load training data
     print("loading training data...")
     train_data_set = dataset_vgg16.Dataset(TRAIN_DIR, IM_SIZE_vgg, batch_size, val_size=0.2)
@@ -85,7 +85,7 @@ def main(from_scratch=True, GPU=False, num_epochs=20) :
     loss = lasagne.objectives.categorical_crossentropy(prediction, target_var)
     loss = loss.mean()
     # Create update expressions for training (Stochastic Gradient Descent with Nesterov momentum)
-    learning_rate = 0.002
+    learning_rate = 0.005
     # Create update expression
     params = lasagne.layers.get_all_params(network, trainable=True)
     #updates = lasagne.updates.nesterov_momentum(loss, params[-2:], learning_rate=learning_rate, momentum=0.9)
