@@ -63,7 +63,7 @@ class Dataset:
         print("Total images: {}".format(len(self.images)))
 
     def preprocess_image(self,filename):
-        img = image.load_img(path, target_size = (self.image_size, self.image_size))
+        img = image.load_img(filename, target_size = (self.image_size, self.image_size))
         arr = image.img_to_array(img)
         arr = np.expand_dims(arr, axis = 0)
         pdb.set_trace()
