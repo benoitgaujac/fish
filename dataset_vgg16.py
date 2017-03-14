@@ -63,7 +63,8 @@ class Dataset:
     def preprocess_image(self,filename):
         img = image.load_img(filename, target_size = (self.image_size, self.image_size))
         arr = image.img_to_array(img)
-        return np.transpose(arr,(2,0,1))
+        return arr
+        #return np.transpose(arr,(2,0,1))
     """
     def get_image(self, filename):
         image = skimage.io.imread(filename)
