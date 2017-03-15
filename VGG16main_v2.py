@@ -10,7 +10,7 @@ import lasagne
 from six.moves import urllib
 
 import dataset_vgg16
-import build_vgg16
+import build_vgg16_v2
 
 import pdb
 import csv
@@ -52,17 +52,22 @@ def load_params(network,weight_path,weight_dir):
     if weight_dir=="vgg":
         with open(weight_path, 'rb') as f:
             weights = pickle.load(f, encoding='latin-1')['param values']
-        params[8:-2] =  weights[:-2]
-    elif weight_dir=="nost":
+        params[:4] =  weights[:4]
+        params[8:11] =  weights[5:8]
+        params[16:-2] = weights[9:-2]
+    elif weight_dir=="from pretrained":
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
-        params[8:] = pretrained_weights
-    elif weight_dir=="st":
+        weights = pretrained_weights[8:]
+        pdb.set_trace()
+        params[:4] =  weights[:4]
+        params[8:11] =  weights[5:8]
+        params[16:-2] = weights[9:]
+    else:
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
         params = pretrained_weights
 
-    #network.initialize_layers()
     lasagne.layers.set_all_param_values(network, params)
     return network
 
@@ -87,7 +92,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
             weight_path = os.path.join(WEIGHTS_DIR, "model_vgg16.npz")
         # Build CNN model
         print("Building network and compiling functions...")
-        network = build_vgg16.build_model(input_var,NUM_CLASSES,GPU)
+        network = build_vgg16_v2.build_model(input_var,NUM_CLASSES,GPU)
         network = load_params(network,weight_path,weight_dir)
         # Create a loss expression for training (categorical crossentropy)
         prediction = lasagne.layers.get_output(network)
@@ -164,7 +169,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
                 best_acc = val_acc / val_batches * 100
                 epochs_without_improvement = 0
                 # save network
-                weight_path = os.path.join(WEIGHTS_DIR, "model_vgg16.npz")
+                weight_path = os.path.join(WEIGHTS_DIR, "model_vgg16_v2.npz")
                 np.savez(weight_path, lasagne.layers.get_all_param_values(network))
                 print("MODEL SAVED")
             else:
@@ -188,7 +193,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
         weight_path = os.path.join(WEIGHTS_DIR, "model_vgg16.npz")
         # Build CNN model
         print("Building network and compiling functions...")
-        network = build_vgg16.build_model(input_var,NUM_CLASSES,GPU)
+        network = build_vgg16_v2.build_model(input_var,NUM_CLASSES,GPU)
         network = load_params(network,weight_path,weight_dir)
         # Create a loss expression for validation/testing
         test_prediction = lasagne.layers.get_output(network, deterministic=True)
@@ -224,4 +229,4 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
 if __name__ == '__main__':
     options, arguments = parser.parse_args(sys.argv)
     # mode test or train
-    main(options.data_dir,options.weights,options.ressources=="GPU",options.weights=="training")
+    main(options.data_dir,options.weights,options.ressources=="GPU",options.mode=="training")
