@@ -25,53 +25,9 @@ def build_model(input_var,nclasses,GPU=False):
         from lasagne.layers import Conv2DLayer as Conv2DLayer
 
     l_in = InputLayer(shape=(None, 3, 224, 224), input_var=input_var)
-    ################### ST ###################
-    b = np.zeros((2, 3), dtype=theano.config.floatX)
-    b[0, 0] = 1
-    b[1, 1] = 1
-    b = b.flatten()
-    loc_l1 = MaxPoolLayer(l_in, pool_size=(2, 2))
-    loc_l2 = Conv2DLayer(
-                loc_l1,
-                num_filters=16,
-                filter_size=(5, 5),
-                W=HeUniform('relu'),
-                nonlinearity=elu)
-    loc_l3 = MaxPoolLayer(loc_l2, pool_size=(2, 2))
-    loc_l4 = Conv2DLayer(
-                loc_l3,
-                num_filters=32,
-                filter_size=(5, 5),
-                W=HeUniform('relu'),
-                nonlinearity=elu)
-    loc_l5 = DenseLayer(
-                loc_l4,
-                num_units=50,
-                W=HeUniform('relu'),
-                nonlinearity=elu)
-    loc_out = DenseLayer(
-                loc_l5,
-                num_units=6,
-                b=b,
-                W=Constant(0.0),
-                nonlinearity=None)
-    # Transformer network
-    l_trans1 = TransformerLayer(l_in, loc_out, downsample_factor=(1.0,1.0))
-
-    """
-    from lasagne.layers import get_all_params
-    params_train= get_all_params(l_trans1)
-    print(params_train)
-    params_= get_all_params(l_trans1,trainable=True)
-    print(params_)
-    from lasagne.layers import get_output_shape
-    shpe = get_output_shape(l_trans1)
-    pdb.set_trace()
-    """
-
     ################### Conv1 ###################
     l_conv1_1 = Conv2DLayer(
-                l_trans1,
+                l_in,
                 num_filters=64, filter_size=(3,3),
                 stride=(1, 1), pad=1,
                 nonlinearity=elu,

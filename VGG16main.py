@@ -8,6 +8,7 @@ import theano
 import theano.tensor as T
 import lasagne
 from six.moves import urllib
+import pandas as pd
 
 import dataset_vgg16
 import build_vgg16
@@ -31,7 +32,7 @@ parser = OptionParser()
 parser.add_option('-r', '--ressources', action='store', dest='ressources',
     help="ressources to compute [CPU, GPU]")
 parser.add_option('-w', '--weights', action='store', dest='weights',
-    help="training from VGG weights or from own pretrained weights [vgg,nost,st]")
+    help="training from VGG weights or from own pretrained weights [vgg,fish]")
 parser.add_option('-d', '--data_dir', action='store', dest='data_dir',
     help="root_dir. Should contain dataset folder with training and validati folders, and test_stg1 folder")
 parser.add_option('-m', '--mode', action='store', dest='mode',
@@ -52,17 +53,13 @@ def load_params(network,weight_path,weight_dir):
     if weight_dir=="vgg":
         with open(weight_path, 'rb') as f:
             weights = pickle.load(f, encoding='latin-1')['param values']
-        params[8:-2] =  weights[:-2]
-    elif weight_dir=="nost":
-        data = np.load(weight_path)
-        pretrained_weights = data[data.keys()[0]]
-        params[8:] = pretrained_weights
-    elif weight_dir=="st":
+        params[:-2] =  weights[:-2]
+    elif weight_dir=="fish":
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
         params = pretrained_weights
 
-    #network.initialize_layers()
+
     lasagne.layers.set_all_param_values(network, params)
     return network
 
@@ -192,8 +189,10 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
         network = load_params(network,weight_path,weight_dir)
         # Create a loss expression for validation/testing
         test_prediction = lasagne.layers.get_output(network, deterministic=True)
+        print("model build..")
     # Compile a second function computing the validation loss and accuracy:
     test_fn = theano.function([input_var], test_prediction, allow_input_downcast=True)
+    """
     csvfileTest = open('submission_AppliedML.csv', 'w')
     Testwriter = csv.writer(csvfileTest, delimiter=';',)
     Testwriter.writerow(['image',
@@ -205,10 +204,15 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
                         FISH_CLASSES[5],
                         FISH_CLASSES[6],
                         FISH_CLASSES[7]])
+    """
     for batch in test_data_set.iterate_minibatches():
         inputs, inputs_id = batch
         pred = test_fn(inputs)
-        pdb.set_trace()
+        submission = pd.DataFrame(pred, columns=FISH_CLASSES)
+        submission.insert(0, 'image', inputs_id)
+        print(submission.head())
+        submission.to_csv('./submission.csv', index=False)
+        """
         for i in range(np.shape(pred)[0]):
             Testwriter.writerow([inputs_id[i],
                                 pred[i][0],
@@ -219,9 +223,10 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
                                 pred[i][5],
                                 pred[i][6],
                                 pred[i][7]])
+        """
 
 ################################################################################
 if __name__ == '__main__':
     options, arguments = parser.parse_args(sys.argv)
     # mode test or train
-    main(options.data_dir,options.weights,options.ressources=="GPU",options.weights=="training")
+    main(options.data_dir,options.weights,options.ressources=="GPU",options.mode=="training")

@@ -96,8 +96,8 @@ class train_dataset:
         Mmean = np.ones((3,self.width,self.height))
         for i in range(3):
             Mmean[i] *= mean[i]
-        for i in range(len(FISH_CLASSES)):
-        #for i in range(1,3):
+        #for i in range(len(FISH_CLASSES)):
+        for i in range(1,3):
             c = 0
             im_dir = os.path.join(root_dir, FISH_CLASSES[i])
             for dir_name, _, file_list in os.walk(im_dir):
@@ -123,24 +123,8 @@ class train_dataset:
     def read_and_process_image(self,filename):
         img = image.load_img(filename, target_size = (self.width, self.height))
         arr = image.img_to_array(img).astype('float32')
-        return arr
-        #return np.transpose(arr,(2,0,1))
-
-    """
-    def print_stats(self):
-        stats = dict()
-        for species in self.FISH_CLASSES:
-            stats[species] = 0
-        for image in self.images:
-            lab = image[1]
-            stats[self.FISH_CLASSES[lab]] += 1
-        #print("Dataset stats:")
-        print("Total images: {}".format(len(self.images)))
-        labels = sorted(stats.items(), key=operator.itemgetter(1))
-        for label in labels:
-            print("{}: {}".format(label[0], label[1]))
-        print("")
-    """
+        #return arr
+        return np.transpose(arr,(2,0,1))
 
     def iterate_minibatches(self, shuffle=False):
         assert len(self.images) == len(self.labels)
@@ -205,14 +189,13 @@ class test_dataset:
 
 
 if __name__ == '__main__':
-    dataset = test_dataset("/Users/benoitgaujac/Documents/UCL/Applied ML/kaggle/Fisheries/test_stg1", 32)
+    dataset = test_dataset("/Users/benoitgaujac/Documents/UCL/Applied ML/kaggle/Fisheries/test_stg1", 64)
     #mean = get_mean(dataset.images)
     #tr = dataset.train_set
     #vl = dataset.val_set
     batches_tr = dataset.iterate_minibatches()
     for batch in batches_tr:
         im, lab = batch
-        pdb.set_trace()
 
     #batches_vl = dataset.iterate_minibatches(vl)
     #split_dataset("train", "dataset", 0.15)
