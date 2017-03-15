@@ -13,8 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
 FISH_CLASSES = ['ALB', 'BET', 'DOL', 'LAG', 'NoF', 'OTHER', 'SHARK', 'YFT']
-width = 3*224
-height = 2*224
+width = 224
+height = 224
 SEED = 66478
 
 def get_mean(list_im):
