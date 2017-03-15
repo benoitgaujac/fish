@@ -55,7 +55,7 @@ def load_params(network,weight_path,weight_dir):
         params[:4] =  weights[:4]
         params[8:11] =  weights[5:8]
         params[16:-2] = weights[9:-2]
-    elif weight_dir=="from pretrained":
+    elif weight_dir=="frompretrained":
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
         weights = pretrained_weights[8:]
