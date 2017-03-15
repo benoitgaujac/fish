@@ -29,8 +29,11 @@ from optparse import OptionParser
 parser = OptionParser()
 parser.add_option('-r', '--ressources', action='store', dest='ressources',
     help="ressources to compute [CPU, GPU]")
-parser.add_option('-w', '--weight_dir', action='store', dest='weight_dir',
+parser.add_option('-w', '--weights', action='store', dest='weights',
     help="training from VGG weights or from own pretrained weights [vgg,nost,st]")
+parser.add_option('-d', '--data_dir', action='store', dest='data_dir',
+    help="data_dir. Should contain training and validati folder")
+
 
 ######################################## Utils ########################################
 def maybe_download(filename):
@@ -62,11 +65,13 @@ def load_params(network,weight_path,weight_dir):
     return network
 
 ######################################## main ########################################
-def main(weight_dir, GPU=False, num_epochs=50) :
+def main(datat_dir, weight_dir, GPU=False, num_epochs=50) :
     # load training data
-    print("loading training data...")
-    train_data_set = dataset_vgg16.train_dataset("/Users/benoitgaujac/Documents/UCL/Applied ML/kaggle/Fisheries/dataset/training", batch_size)
-    val_data_set = dataset_vgg16.train_dataset("/Users/benoitgaujac/Documents/UCL/Applied ML/kaggle/Fisheries/dataset/validati", batch_size)
+    print("\nloading data...")
+    train_dir = os.path.join(datat_dir, "training")
+    train_data_set = dataset_vgg16.train_dataset(train_dir, batch_size)
+    val_dir = os.path.join(datat_dir, "validati")
+    val_data_set = dataset_vgg16.train_dataset(val_dir, batch_size)
     # Prepare Theano variables for inputs and targets
     input_var = T.tensor4('inputs')
     target_var = T.ivector('targets')
@@ -172,4 +177,4 @@ def main(weight_dir, GPU=False, num_epochs=50) :
 if __name__ == '__main__':
     options, arguments = parser.parse_args(sys.argv)
     # mode test or train
-    main(options.weight_dir,options.ressources=="GPU")
+    main(options.data_dir,options.weights,options.ressources=="GPU")

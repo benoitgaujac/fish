@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
 FISH_CLASSES = ['ALB', 'BET', 'DOL', 'LAG', 'NoF', 'OTHER', 'SHARK', 'YFT']
-width = 5*224
+width = 3*224
 height = 3*224
 SEED = 66478
 

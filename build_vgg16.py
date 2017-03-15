@@ -24,7 +24,7 @@ def build_model(input_var,nclasses,GPU=False):
     else:
         from lasagne.layers import Conv2DLayer as Conv2DLayer
 
-    l_in = InputLayer(shape=(None, 3, 224*5, 224*3), input_var=input_var)
+    l_in = InputLayer(shape=(None, 3, 224*3, 224*2), input_var=input_var)
     ################### ST ###################
     b = np.zeros((2, 3), dtype=theano.config.floatX)
     b[0, 0] = 1
@@ -56,7 +56,7 @@ def build_model(input_var,nclasses,GPU=False):
                 W=Constant(0.0),
                 nonlinearity=None)
     # Transformer network
-    l_trans1 = TransformerLayer(l_in, loc_out, downsample_factor=(5.0,3))
+    l_trans1 = TransformerLayer(l_in, loc_out, downsample_factor=(3.0,2.0))
 
     """
     from lasagne.layers import get_all_params
