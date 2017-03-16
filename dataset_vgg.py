@@ -17,67 +17,6 @@ width = 224
 height = 224
 SEED = 66478
 
-def get_mean(list_im):
-    images = np.stack([im[0] for im in list_im]).astype('float32')
-    mean = np.mean(images,(1,3))
-    mean = np.mean(np.transpose(mean,(1,0)),(1))
-    print("Mean on training set: {}, {}, {}".format(mean[0],mean[1],mean[2]))
-    np.savez("training_mean.npz", mean)
-
-def split_dataset(root_dir, dst_dir, val_size):
-    if not os.path.isdir(dst_dir):
-        os.mkdir(dst_dir)
-    else:
-        # Remove old split
-        shutil.rmtree(dst_dir)
-        os.mkdir(dst_dir)
-    for j in range(len(FISH_CLASSES)):
-        images = []
-        labels = []
-        im_dir = os.path.join(root_dir, FISH_CLASSES[j])
-        for dir_name, _, file_list in os.walk(im_dir):
-            for file_name in file_list:
-                if file_name.endswith('.png') or file_name.endswith('.jpg'):
-                    image_file = os.path.join(dir_name, file_name)
-                    im = image.load_img(image_file, target_size=None)
-                    if im is None:
-                        print("Error loading image: {}".format(image_file))
-                        continue
-                    label = FISH_CLASSES[j]
-                    images.append([im,file_name])
-                    labels.append(label)
-                else:
-                    print("Unsupported extension: {}".format(os.path.join(dir_name, file_name)))
-        print("{}: read {} images.".format(FISH_CLASSES[j],len(images)))
-        X_train, X_val, y_train, y_val = train_test_split(images, labels, test_size=val_size, random_state=SEED, stratify=labels)
-        for i in range(len(X_train)):
-            im = X_train[i][0]
-            fname = X_train[i][1]
-            label = y_train[i]
-            dst_train = os.path.join(dst_dir,"training")
-            if not os.path.isdir(dst_train):
-                os.mkdir(dst_train)
-            dst_path = os.path.join(dst_train,label)
-            if not os.path.isdir(dst_path):
-                os.mkdir(dst_path)
-            im.save(os.path.join(dst_path, fname))
-
-        for i in range(len(X_val)):
-            im = X_val[i][0]
-            fname = X_val[i][1]
-            label = y_val[i]
-            dst_val = os.path.join(dst_dir,"validati")
-            if not os.path.isdir(dst_val):
-                os.mkdir(dst_val)
-            dst_path = os.path.join(dst_val,label)
-            if not os.path.isdir(dst_path):
-                os.mkdir(dst_path)
-            im.save(os.path.join(dst_path, fname))
-
-        print("{} done:".format(FISH_CLASSES[j]))
-        print("  train:\t{} images".format(len(X_train)))
-        print("  valditaion:\t{} images\n".format(len(X_val)))
-
 
 class train_dataset:
     def __init__(self, root_dir, batch_size):
