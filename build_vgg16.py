@@ -16,7 +16,7 @@ import numpy as np
 import theano
 import pdb
 
-dropout_p = 0.5
+dropout_p = 0.65
 
 def build_model(input_var,nclasses,GPU=False):
     if GPU:
