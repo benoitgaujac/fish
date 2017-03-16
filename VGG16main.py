@@ -24,7 +24,7 @@ NUM_CLASSES = 8
 CHANNELS = 3
 IM_SIZE_vgg = 224
 IM_SIZE_incv3 = 299
-batch_size = 128
+batch_size = 256
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -57,7 +57,6 @@ def load_params(network,weight_path,weight_dir):
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
         params = pretrained_weights
-
 
     lasagne.layers.set_all_param_values(network, params)
     return network
@@ -93,9 +92,8 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
         learning_rate = 0.001
         # Create update expression
         params = lasagne.layers.get_all_params(network, trainable=True)
-        params_st = params[:8]
         params_fc = params[-2:]
-        params_to_train = params_st + params_fc
+        params_to_train = params_fc
         #updates = lasagne.updates.nesterov_momentum(loss, params[-2:], learning_rate=learning_rate, momentum=0.9)
         updates = lasagne.updates.adam(loss, params_to_train, learning_rate=learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-08)
         # Create a loss expression for validation/testing
