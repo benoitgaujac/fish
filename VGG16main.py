@@ -24,8 +24,7 @@ NUM_CLASSES = 8
 CHANNELS = 3
 IM_SIZE_vgg = 224
 IM_SIZE_incv3 = 299
-batch_size = 256
-TEST_SIZE = 1000
+batch_size = 128
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -176,7 +175,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
 
     print("\nLoading test data...")
     test_dir = os.path.join(datat_dir,"test_stg1")
-    test_data_set = dataset_vgg16.test_dataset(test_dir, TEST_SIZE)
+    test_data_set = dataset_vgg16.test_dataset(test_dir, 100)
     if not training:
         # Prepare Theano variables for inputs and targets
         input_var = T.tensor4('inputs')
@@ -192,38 +191,24 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
         print("model build..")
     # Compile a second function computing the validation loss and accuracy:
     test_fn = theano.function([input_var], test_prediction, allow_input_downcast=True)
-    """
-    csvfileTest = open('submission_AppliedML.csv', 'w')
-    Testwriter = csv.writer(csvfileTest, delimiter=';',)
-    Testwriter.writerow(['image',
-                        FISH_CLASSES[0],
-                        FISH_CLASSES[1],
-                        FISH_CLASSES[2],
-                        FISH_CLASSES[3],
-                        FISH_CLASSES[4],
-                        FISH_CLASSES[5],
-                        FISH_CLASSES[6],
-                        FISH_CLASSES[7]])
-    """
+    c=0
+    im_id = []
     for batch in test_data_set.iterate_minibatches():
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        start_time = time.time()
         inputs, inputs_id = batch
         pred = test_fn(inputs)
-        submission = pd.DataFrame(pred, columns=FISH_CLASSES)
-        submission.insert(0, 'image', inputs_id)
-        print(submission.head())
-        submission.to_csv('./submission.csv', index=False)
-        """
-        for i in range(np.shape(pred)[0]):
-            Testwriter.writerow([inputs_id[i],
-                                pred[i][0],
-                                pred[i][1],
-                                pred[i][2],
-                                pred[i][3],
-                                pred[i][4],
-                                pred[i][5],
-                                pred[i][6],
-                                pred[i][7]])
-        """
+        if c==0:
+            submission = pd.DataFrame(pred, columns=FISH_CLASSES)
+        else:
+            pred_to_add = pd.DataFrame(pred, columns=FISH_CLASSES)
+            submission = submission.append(pred_to_add,ignore_index=True)
+        im_id += inputs_id
+        c += 1
+        print("Batch {} done, took {:.4f}s.".format(c,time.time()-start_time))
+    submission.insert(0, 'image', im_id)
+    submission.to_csv('./submission.csv', index=False)
+
 
 ################################################################################
 if __name__ == '__main__':
