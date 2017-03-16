@@ -10,7 +10,7 @@ import lasagne
 from six.moves import urllib
 import pandas as pd
 
-import dataset_vgg16
+import dataset_vgg
 import build_vgg19
 
 import pdb
@@ -66,9 +66,9 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
         # load training data
         print("\nloading data...")
         train_dir = os.path.join(datat_dir, "dataset/training")
-        train_data_set = dataset_vgg16.train_dataset(train_dir, batch_size)
+        train_data_set = dataset_vgg.train_dataset(train_dir, batch_size)
         val_dir = os.path.join(datat_dir, "dataset/validati")
-        val_data_set = dataset_vgg16.train_dataset(val_dir, batch_size)
+        val_data_set = dataset_vgg.train_dataset(val_dir, batch_size)
 
         # Prepare Theano variables for inputs and targets
         input_var = T.tensor4('inputs')
@@ -172,7 +172,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
 
     print("\nLoading test data...")
     test_dir = os.path.join(datat_dir,"test_stg1")
-    test_data_set = dataset_vgg16.test_dataset(test_dir, 100)
+    test_data_set = dataset_vgg.test_dataset(test_dir, 100)
     if not training:
         # Prepare Theano variables for inputs and targets
         input_var = T.tensor4('inputs')
