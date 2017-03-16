@@ -61,7 +61,7 @@ def load_params(network,weight_path,weight_dir):
     return network
 
 ######################################## main ########################################
-def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
+def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50, data_augmentation=True):
     if training:
         # load training data
         print("\nloading data...")
@@ -134,6 +134,35 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
                 train_err += train_fn(inputs, targets)
                 train_batches += 1
 
+            if data_augmentation:
+                datagen = ImageDataGenerator(
+                                featurewise_center=False,  # set input mean to 0 over the dataset
+                                samplewise_center=False,  # set each sample mean to 0
+                                featurewise_std_normalization=False,  # divide inputs by std of the dataset
+                                samplewise_std_normalization=False,  # divide each input by its std
+                                zca_whitening=True,  # apply ZCA whitening
+                                rotation_range=5,  # randomly rotate images in the range (degrees, 0 to 180)
+                                width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
+                                height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
+                                horizontal_flip=True,  # randomly flip images
+                                vertical_flip=False, # randomly flip images
+                                shear_range=0.2, # randomly shear images, shear Intensity
+                                zoom_range=0.2, # randomly zoom images: [lower, upper] = [1-zoom_range, 1+zoom_range]
+                                fill_mode='nearest'))
+                random_seed = np.random.random_integers(0, 100000)
+                train_imgen = np.stack(train_data_set.images,axis=0)
+                train_labgen = np.stack(train_data_set.labels,axis=0)
+                train_batch_generator = datagen.flow_from_directory(
+                                            train_imgen, train_labgen,
+                                            batch_size=batch_size,
+                                            shuffle = True,
+                                            seed = random_seed)
+                for batch in train_batch_generator:
+                    inputs, targets = batch
+                    train_err += train_fn(inputs, targets)
+                    train_batches += 1
+
+
             # And a full pass over the validation data:
             val_err = 0
             val_batches = 0
@@ -144,6 +173,23 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=50):
                 val_err += err
                 val_acc += acc
                 val_batches += 1
+
+            if data_augmentation:
+                random_seed = np.random.random_integers(0, 100000)
+                val_imgen = np.stack(val_data_set.images,axis=0)
+                val_labgen = np.stack(val_data_set.labels,axis=0)
+                val_batch_generator = datagen.flow_from_directory(
+                                            val_imgen, val_labgen,
+                                            batch_size=batch_size,
+                                            shuffle = True,
+                                            seed = random_seed)
+                for batch in val_batch_generator:
+                    inputs, targets = batch
+                    err, acc = val_fn(inputs, targets)
+                    val_err += err
+                    val_acc += acc
+                    val_batches += 1
+
 
             # Then we print the results for this epoch:
             print("Epoch {} of {} took {:.3f}s".format(epoch + 1, num_epochs, time.time() - start_time))
