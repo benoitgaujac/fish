@@ -16,7 +16,7 @@ import numpy as np
 import theano
 import pdb
 
-dropout_p = 0.65
+dropout_p = 0.5
 
 def build_model(input_var,nclasses,GPU=False):
     if GPU:
@@ -147,6 +147,7 @@ def build_model(input_var,nclasses,GPU=False):
     fc8 = DenseLayer(
     		fc7_dropout,
             num_units=nclasses,
+            w=w=HeUniform('elu'),
             nonlinearity=None)
     network = NonlinearityLayer(fc8, softmax)
 
