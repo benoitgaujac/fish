@@ -32,11 +32,13 @@ class train_dataset:
         # Substract training mean
         mean = np.load("training_mean.npz")
         mean = mean[mean.keys()[0]]
+        """
         Mmean = np.ones((3,self.width,self.height))
         for i in range(3):
             Mmean[i] *= mean[i]
-        for i in range(len(FISH_CLASSES)):
-        #for i in range(1,3):
+        """
+        #for i in range(len(FISH_CLASSES)):
+        for i in range(1,3):
             c = 0
             im_dir = os.path.join(root_dir, FISH_CLASSES[i])
             for dir_name, _, file_list in os.walk(im_dir):
@@ -44,7 +46,8 @@ class train_dataset:
                     if file_name.endswith('.png') or file_name.endswith('.jpg'):
                         image_file = os.path.join(dir_name, file_name)
                         image = self.read_and_process_image(image_file)
-                        image -= Mmean
+                        #image -= Mmean
+                        image -= mean.reshape((3,1,1))
                         if image is None:
                             print("Error loading image: {}".format(image_file))
                             continue
@@ -61,7 +64,7 @@ class train_dataset:
 
     def read_and_process_image(self,filename):
         img = image.load_img(filename, target_size = (self.width, self.height))
-        arr = image.img_to_array(img).astype('float32')
+        arr = image.img_to_array(img,data_format='channels_first').astype('float32')
         return arr
         #return np.transpose(arr,(2,0,1))
 
@@ -114,9 +117,8 @@ class test_dataset:
 
     def read_and_process_image(self,filename):
         img = image.load_img(filename, target_size = (self.width, self.height))
-        arr = image.img_to_array(img).astype('float32')
+        arr = image.img_to_array(img,data_format='channels_first').astype('float32')
         return arr
-        #return np.transpose(arr,(2,0,1))
 
     def iterate_minibatches(self):
         assert len(self.images) == len(self.images_id)

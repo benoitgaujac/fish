@@ -147,7 +147,7 @@ def build_model(input_var,nclasses,GPU=False):
     fc8 = DenseLayer(
     		fc7_dropout,
             num_units=nclasses,
-            w=w=HeUniform('elu'),
+            W=HeUniform(),
             nonlinearity=None)
     network = NonlinearityLayer(fc8, softmax)
 
