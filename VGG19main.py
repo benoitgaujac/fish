@@ -129,6 +129,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                 updates = lasagne.updates.adam(loss, params_to_train, learning_rate=learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-08)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
             # In each epoch, do a full pass over the training data:
+            print("Start training original data..")
             train_err = 0
             train_batches = 0
             start_time = time.time()
@@ -137,6 +138,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                 train_err += train_fn(inputs, targets)
                 train_batches += 1
             # If data augmentation
+            print("Training augmented data done")
             if data_augmentation:
                 print("Start training augmented data..")
                 datagen = ImageDataGenerator(
@@ -171,7 +173,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                     c+=1
                     if c>=nb_batch_train:
                         break
-                print("Training augmented data done\n")
+                print("Training augmented data done")
 
 
             # And a full pass over the validation data:
