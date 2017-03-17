@@ -24,9 +24,9 @@ FISH_CLASSES = ['ALB', 'BET', 'DOL', 'LAG', 'NoF', 'OTHER', 'SHARK', 'YFT']
 NUM_CLASSES = 8
 CHANNELS = 3
 IM_SIZE_vgg = 224
-batch_size = 256
+batch_size = 64
 test_batch_size = 200
-nbr_augmentation = 3
+nbr_augmentation = 5
 
 from optparse import OptionParser
 parser = OptionParser()
