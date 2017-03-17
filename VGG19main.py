@@ -289,9 +289,8 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         raise Exception("Error in test predictions")
     # Average predictions
     average_preds = np.average(stack_preds,axis=0)
-    pdb.set_trace()
     # Sanity check
-    if len(np.shape(average_preds))!=2 or np.shape(stack_preds)[0]!=(len(im_id)):
+    if len(np.shape(average_preds))!=2 or np.shape(average_preds)[0]!=(len(im_id)):
         raise Exception("Error in average predictions")
     submission = pd.DataFrame(average_preds, columns=FISH_CLASSES)
     submission.insert(0, 'image', im_id)
