@@ -37,8 +37,8 @@ class train_dataset:
         for i in range(3):
             Mmean[i] *= mean[i]
         """
-        #for i in range(len(FISH_CLASSES)):
-        for i in range(1,3):
+        for i in range(len(FISH_CLASSES)):
+        #for i in range(1,3):
             c = 0
             im_dir = os.path.join(root_dir, FISH_CLASSES[i])
             for dir_name, _, file_list in os.walk(im_dir):
