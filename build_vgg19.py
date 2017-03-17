@@ -136,7 +136,7 @@ def build_model(input_var,nclasses,GPU=False):
     		pool5,
             nonlinearity=elu,
             num_units=4096)
-    fc6_dropout = DropoutLayer(fc6, p=dropout_p)
+    fc6_dropout = DropoutLayer(fc6, p=0)
     ################### fc7 ###################
     fc7 = DenseLayer(
     		fc6_dropout,
