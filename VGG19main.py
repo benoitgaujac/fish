@@ -138,6 +138,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                 train_batches += 1
             # If data augmentation
             if data_augmentation:
+                print("Start training augmented data..")
                 datagen = ImageDataGenerator(
                                 featurewise_center=False,  # set input mean to 0 over the dataset
                                 samplewise_center=False,  # set each sample mean to 0
@@ -169,6 +170,8 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                     train_batches += 1
                     if c>=nb_batch_train:
                         break
+                print("Training augmented data done\n")
+
 
             # And a full pass over the validation data:
             val_err = 0
@@ -198,7 +201,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                     val_err += err
                     val_acc += acc
                     val_batches += 1
-                    if c>=nb_batch_val
+                    if c>=nb_batch_val:
                         break
 
             # Then we print the results for this epoch:
@@ -235,9 +238,9 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         input_var = T.tensor4('inputs')
         target_var = T.ivector('targets')
         # Downloading weights if needed
-        #weight_path = os.path.join(WEIGHTS_DIR, "model_vgg19.npz")
-        weight_path = os.path.join(WEIGHTS_DIR, "vgg19.pkl")
-        maybe_download("vgg19.pkl")
+        weight_path = os.path.join(WEIGHTS_DIR, "model_vgg19.npz")
+        #weight_path = os.path.join(WEIGHTS_DIR, "vgg19.pkl")
+        #maybe_download("vgg19.pkl")
         # Build CNN model
         print("Building network and compiling functions...")
         network = build_vgg19.build_model(input_var,NUM_CLASSES,GPU)
