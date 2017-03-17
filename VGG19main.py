@@ -228,7 +228,8 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         target_var = T.ivector('targets')
         # Downloading weights if needed
         #weight_path = os.path.join(WEIGHTS_DIR, "model_vgg19.npz")
-        weight_path = os.path.join(WEIGHTS_DIR, "vgg19.pkl")
+        weight_path = os.path.join(WEIGHTS_DIR, "vgg19.pkl
+        maybe_download("vgg19.pkl")
         # Build CNN model
         print("Building network and compiling functions...")
         network = build_vgg19.build_model(input_var,NUM_CLASSES,GPU)
@@ -254,16 +255,10 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
     print("Original set done, took {:.2f}s\n".format(time.time()-start_time))
     # Data augmentation
     test_datagen = ImageDataGenerator(
-                    featurewise_center=False,  # set input mean to 0 over the dataset
-                    samplewise_center=False,  # set each sample mean to 0
-                    featurewise_std_normalization=False,  # divide inputs by std of the dataset
-                    samplewise_std_normalization=False,  # divide each input by its std
-                    zca_whitening=False,  # apply ZCA whitening
-                    rotation_range=0.,  # randomly rotate images in the range (degrees, 0 to 180)
+                    rotation_range=5,  # randomly rotate images in the range (degrees, 0 to 180)
                     width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
                     height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
                     horizontal_flip=True,  # randomly flip images
-                    vertical_flip=False, # randomly flip images
                     shear_range=0.1, # randomly shear images, shear Intensity
                     zoom_range=0.1, # randomly zoom images: [lower, upper] = [1-zoom_range, 1+zoom_range]
                     fill_mode='nearest', # fills points outside the boundaries of the input woth nearest
@@ -273,12 +268,19 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         print('{}th augmentation for testing ...'.format(idx+1))
         random_seed = np.random.random_integers(0, 100000)
-        test_generator = test_datagen.flow( test_imgen,batch_size=test_batch_size,shuffle = False,seed = random_seed) # make sure shuffle = False !!!
+        test_generator = test_datagen.flow(test_imgen,batch_size=test_batch_size,shuffle=False,seed=random_seed) # make sure shuffle = False !!!
         prediction = []
+        nb_batch = len(test_data_set)/test_batch_size
+        c=0
+        while c<nb_batch:
         for batch in test_generator:
             inputs = batch
             pred = test_fn(inputs)
             prediction.append(pred)
+            c+=1
+            print("Batch {} done".format(c))
+            if c>=nb_batch:
+                break
         predictions.append(np.concatenate(prediction, axis=0))
         print("{}th augmentation set done, took {:.2f}s\n".format(idx+1,time.time()-start_time))
     # Stack prediction to average
