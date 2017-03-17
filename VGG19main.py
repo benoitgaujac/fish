@@ -138,7 +138,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                 train_err += train_fn(inputs, targets)
                 train_batches += 1
             # If data augmentation
-            print("Training augmented data done")
+            print("Training original data done")
             if data_augmentation:
                 print("Start training augmented data..")
                 datagen = ImageDataGenerator(
