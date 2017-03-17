@@ -168,6 +168,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                     inputs, targets = batch
                     train_err += train_fn(inputs, targets)
                     train_batches += 1
+                    c+=1
                     if c>=nb_batch_train:
                         break
                 print("Training augmented data done\n")
@@ -201,6 +202,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                     val_err += err
                     val_acc += acc
                     val_batches += 1
+                    c+=1
                     if c>=nb_batch_val:
                         break
 
