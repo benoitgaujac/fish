@@ -26,7 +26,7 @@ CHANNELS = 3
 IM_SIZE_vgg = 224
 batch_size = 64
 test_batch_size = 200
-nbr_augmentation = 2
+nbr_augmentation = 5
 
 from optparse import OptionParser
 parser = OptionParser()
