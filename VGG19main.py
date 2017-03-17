@@ -161,10 +161,14 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                                             batch_size=batch_size,
                                             shuffle = True,
                                             seed = random_seed)
+                nb_batch_train = len(train_data_set.images)/batch_size
+                c=0
                 for batch in train_batch_generator:
                     inputs, targets = batch
                     train_err += train_fn(inputs, targets)
                     train_batches += 1
+                    if c>=nb_batch_train:
+                        break
 
             # And a full pass over the validation data:
             val_err = 0
@@ -186,12 +190,16 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                                             batch_size=batch_size,
                                             shuffle = True,
                                             seed = random_seed)
+                nb_batch_val = len(val_data_set.images) / batch_size
+                c=0
                 for batch in val_batch_generator:
                     inputs, targets = batch
                     err, acc = val_fn(inputs, targets)
                     val_err += err
                     val_acc += acc
                     val_batches += 1
+                    if c>=nb_batch_val
+                        break
 
             # Then we print the results for this epoch:
             print("Epoch {} of {} took {:.3f}s".format(epoch + 1, num_epochs, time.time() - start_time))
