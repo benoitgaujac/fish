@@ -26,7 +26,7 @@ CHANNELS = 3
 IM_SIZE_vgg = 224
 batch_size = 64
 test_batch_size = 200
-nbr_augmentation = 5
+nbr_augmentation = 2
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -228,7 +228,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         target_var = T.ivector('targets')
         # Downloading weights if needed
         #weight_path = os.path.join(WEIGHTS_DIR, "model_vgg19.npz")
-        weight_path = os.path.join(WEIGHTS_DIR, "vgg19.pkl
+        weight_path = os.path.join(WEIGHTS_DIR, "vgg19.pkl")
         maybe_download("vgg19.pkl")
         # Build CNN model
         print("Building network and compiling functions...")
@@ -246,7 +246,6 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
     prediction = []
     im_id = []
     for batch in test_data_set.iterate_minibatches():
-        start_time = time.time()
         inputs, inputs_id = batch
         pred = test_fn(inputs)
         im_id += inputs_id
@@ -267,12 +266,12 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
     for idx in range(nbr_augmentation):
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         print('{}th augmentation for testing ...'.format(idx+1))
+        start_time = time.time()
         random_seed = np.random.random_integers(0, 100000)
         test_generator = test_datagen.flow(test_imgen,batch_size=test_batch_size,shuffle=False,seed=random_seed) # make sure shuffle = False !!!
         prediction = []
-        nb_batch = len(test_data_set)/test_batch_size
+        nb_batch = len(test_data_set.images)/test_batch_size
         c=0
-        while c<nb_batch:
         for batch in test_generator:
             inputs = batch
             pred = test_fn(inputs)
@@ -290,6 +289,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         raise Exception("Error in test predictions")
     # Average predictions
     average_preds = np.average(stack_preds,axis=0)
+    pdb.set_trace()
     # Sanity check
     if len(np.shape(average_preds))!=2 or np.shape(stack_preds)[0]!=(len(im_id)):
         raise Exception("Error in average predictions")
