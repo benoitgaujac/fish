@@ -17,6 +17,7 @@ width = 224
 height = 224
 SEED = 66478
 
+MEAN_VALUE = np.array([103.939, 116.779, 123.68])
 
 class train_dataset:
     def __init__(self, root_dir, batch_size):
@@ -32,11 +33,6 @@ class train_dataset:
         # Substract training mean
         mean = np.load("training_mean.npz")
         mean = mean[mean.keys()[0]]
-        """
-        Mmean = np.ones((3,self.width,self.height))
-        for i in range(3):
-            Mmean[i] *= mean[i]
-        """
         for i in range(len(FISH_CLASSES)):
         #for i in range(1,3):
             c = 0
@@ -46,8 +42,8 @@ class train_dataset:
                     if file_name.endswith('.png') or file_name.endswith('.jpg'):
                         image_file = os.path.join(dir_name, file_name)
                         image = self.read_and_process_image(image_file)
-                        #image -= Mmean
-                        image -= mean.reshape((3,1,1))
+                        #image -= mean.reshape((3,1,1))
+                        image -= MEAN_VALUE.reshape((3,1,1))
                         if image is None:
                             print("Error loading image: {}".format(image_file))
                             continue
