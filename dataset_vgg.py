@@ -54,15 +54,12 @@ class train_dataset:
                         print("Unsupported extension: {}".format(os.path.join(dir_name, file_name)))
                     c+=1
             print("{} done: {} images.".format(FISH_CLASSES[i],c))
-        #self.images = np.stack([im_ for im_ in im]).astype('float32')
-        #self.labels = np.stack([lab_ for lab_ in lab]).astype('float32')
         print("Total {} images: {}\n".format(root_dir[-8:],len(self.images)))
 
     def read_and_process_image(self,filename):
         img = image.load_img(filename, target_size = (self.width, self.height))
         arr = image.img_to_array(img,data_format='channels_first').astype('float32')
         return arr
-        #return np.transpose(arr,(2,0,1))
 
     def iterate_minibatches(self, shuffle=False):
         assert len(self.images) == len(self.labels)

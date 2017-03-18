@@ -12,7 +12,7 @@ from six.moves import urllib
 import pandas as pd
 
 import dataset_vgg
-import build_vgg19
+import build_vgg19_v2 as build_vgg19
 
 import pdb
 import csv
@@ -55,7 +55,7 @@ def load_params(network,weight_path,weight_dir):
     if weight_dir=="vgg":
         with open(weight_path, 'rb') as f:
             weights = pickle.load(f, encoding='latin-1')['param values']
-        params[:-2] =  weights[:-2]
+        params[:-6] =  weights[:-3]
     elif weight_dir=="fish":
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
@@ -174,7 +174,6 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
                     if c>=nb_batch_train:
                         break
                 print("Training augmented data done")
-
 
             # And a full pass over the validation data:
             val_err = 0
