@@ -91,7 +91,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         loss = lasagne.objectives.categorical_crossentropy(prediction, target_var)
         loss = loss.mean()
         # Create update expressions for training (Stochastic Gradient Descent with Nesterov momentum)
-        learning_rate = 0.001
+        learning_rate = 0.0007
         # Create update expression
         params = lasagne.layers.get_all_params(network, trainable=True)
         params_fc = params[-6:]
