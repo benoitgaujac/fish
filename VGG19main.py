@@ -96,6 +96,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         params = lasagne.layers.get_all_params(network, trainable=True)
         params_fc = params[-5:]
         params_to_train = params_fc
+        print("Params to train: {}".format(params_to_train))
         #updates = lasagne.updates.nesterov_momentum(loss, params[-2:], learning_rate=learning_rate, momentum=0.9)
         updates = lasagne.updates.adam(loss, params_to_train, learning_rate=learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-08)
         # Create a loss expression for validation/testing
