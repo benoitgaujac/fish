@@ -319,4 +319,4 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
 if __name__ == '__main__':
     options, arguments = parser.parse_args(sys.argv)
     # mode test or train
-    main(options.data_dir,options.weights,options.ressources=="GPU",options.mode=="training",data_augmentation=False)
+    main(options.data_dir,options.weights,options.ressources=="GPU",options.mode=="training",data_augmentation=True)
