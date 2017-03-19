@@ -30,9 +30,12 @@ class train_dataset:
     def init_images(self, root_dir):
         self.images = []
         self.labels = []
+        """
+        # we substract mean from imagenet
         # Substract training mean
         mean = np.load("training_mean.npz")
         mean = mean[mean.keys()[0]]
+        """
         for i in range(len(FISH_CLASSES)):
         #for i in range(1,3):
             c = 0

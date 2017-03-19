@@ -12,7 +12,7 @@ from six.moves import urllib
 import pandas as pd
 
 import dataset_vgg
-import build_vgg19_v2 as build_vgg19
+import build_vgg19_v3 as build_vgg19
 
 import pdb
 import csv
@@ -56,10 +56,12 @@ def load_params(network,weight_path,weight_dir):
         with open(weight_path, 'rb') as f:
             weights = pickle.load(f, encoding='latin-1')['param values']
         params[:-6] =  weights[:-3]
-    elif weight_dir=="fish":
+    elif weight_dir=="vgg19_v2":
         data = np.load(weight_path)
         pretrained_weights = data[data.keys()[0]]
-        params = pretrained_weights
+        params[:-15] = pretrained_weights[:-9]
+        params[-12:-10] = pretrained_weights[-9:-7]
+        params[-7:] = pretrained_weights[-7:]
     lasagne.layers.set_all_param_values(network, params)
     return network
 
@@ -81,7 +83,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
             weight_path = os.path.join(WEIGHTS_DIR, "vgg19.pkl")
             maybe_download("vgg19.pkl")
         else:
-            weight_path = os.path.join(WEIGHTS_DIR, "model_vgg19.npz")
+            weight_path = os.path.join(WEIGHTS_DIR, "model_" + weight_dir + ".npz")
         # Build CNN model
         print("Building network and compiling functions...")
         network = build_vgg19.build_model(input_var,NUM_CLASSES,GPU)
@@ -94,7 +96,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         learning_rate = 0.0007
         # Create update expression
         params = lasagne.layers.get_all_params(network, trainable=True)
-        params_fc = params[-5:]
+        params_fc = params[-11:]
         params_to_train = params_fc
         print("Params to train: {}".format(params_to_train))
         #updates = lasagne.updates.nesterov_momentum(loss, params[-2:], learning_rate=learning_rate, momentum=0.9)
