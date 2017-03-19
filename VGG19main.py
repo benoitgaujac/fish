@@ -96,7 +96,7 @@ def main(datat_dir, weight_dir, GPU=False, training=False, num_epochs=25, data_a
         learning_rate = 0.0007
         # Create update expression
         params = lasagne.layers.get_all_params(network, trainable=True)
-        params_fc = params[-11:]
+        params_fc = params[-10:]
         params_to_train = params_fc
         print("Params to train: {}".format(params_to_train))
         #updates = lasagne.updates.nesterov_momentum(loss, params[-2:], learning_rate=learning_rate, momentum=0.9)
